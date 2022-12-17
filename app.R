@@ -1,12 +1,8 @@
 #
 # This is a Shiny web application. You can run the application by clicking
 # the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
 
+library("tibble")
 library(dplyr)
 library(RSQLite)
 library(radarchart)
@@ -63,6 +59,10 @@ ui <- fluidPage(
 
     # Application title
     titlePanel("Player Attributes"),
+    
+   
+    
+    
 
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
@@ -88,13 +88,13 @@ ui <- fluidPage(
                     selected = "Lionel Messi"),
         
         
-        radioButtons(inputId = "plot_type" , 
-                     label = "Select the plot",
-                     choices = c("scatter", "bar", "hist" )),
+        radioButtons(inputId = "option_type" , 
+                     label = "Choose an  Option",
+                     choices = c("Single", "1 VS 1", "multiple" )),
         
         
         h3("Compare Attribute of two  different Players"),
-        fluidRow( column(5,
+        fluidRow( column(6,
                selectInput("com1", 
                            label = "Choose a player",
                            choices = c("Lionel Messi",
@@ -115,7 +115,7 @@ ui <- fluidPage(
                            selected = "Lionel Messi")),
      
         
-        column(5,
+        column(6,
                selectInput("com2", 
                            label = "Choose a player",
                            choices = c("Lionel Messi",
@@ -139,24 +139,17 @@ ui <- fluidPage(
                )),
         
         
-        selectInput("com3", 
-                    label = "Choose a player",
-                    choices = c("Lionel Messi",
-                                "Cristiano Ronaldo",
-                                "Luis Suarez",
-                                "Manuel Neuer",
-                                "Neymar",
-                                "Arjen Robben",
-                                "Zlatan Ibrahimovic",
-                                "Andres Iniesta",
-                                "Eden Hazard",
-                                "Mesut Oezil",
-                                "Robert Lewandowski",
-                                "Sergio Aguero",
-                                "Thiago Silva",
-                                "David De Gea",
-                                "Luka Modric"),
-                    selected = "Lionel Messi"),),
+        selectInput("top_player", 
+                    label = "Choose top n Player",
+                    choices = c("3",
+                                "5",
+                                "8",
+                                "10",
+                                "15",
+                                "20",
+                                "25",
+                                "30"),
+                                selected = "3"),),
         
 
         # Show a plot of the generated distribution
@@ -223,22 +216,48 @@ server <- function(input, output) {
                      "Sergio Aguero" = 'Sergio Aguero',
                      "David De Gea" = 'David De Gea',
                      "Luka Modric"='Luka Modric')
-      
-      
-     
-      
-    
-      
+      top_n_palyer <- switch(input$top_player, 
+                             "3"=3,
+                              "5"=5,
+                              "8"=8,
+                              "10"=10,
+                              "15"=15,
+                              "20"=20,
+                              "25"=25,
+                              "30"=30)
       #xplayer_attr <- select(filter(x),c('Neymar'))
-      colors_border=c( rgb(0.8,0.2,0.5,0.9)  )
-      colors_in=c( rgb(0.8,0.2,0.5,0.4)  )
-      xn=x[data1,]
-      xn=x[data2,]
+      colors_border=c( rgb(0.2,0.5,0.5,0.9), rgb(0.8,0.2,0.5,0.9) , rgb(0.7,0.5,0.1,0.9) )
+      colors_in=c( rgb(0.2,0.5,0.5,0.4), rgb(0.8,0.2,0.5,0.4) , rgb(0.7,0.5,0.1,0.4) )
+      if (input$option_type == "Single") {
+        xn=x[data1,]
+      } else if (input$option_type == "1 VS 1") {
+        x1=x[data1,]
+        x2=x[data2,]
+        xn <- rbind(x1, x2)
+        
+      }
+      else if (input$option_type == "multiple") {
+        top_x <- 
+          latest_ps  %>% 
+          arrange(desc(overall_rating)) %>% 
+          head(n = top_n_palyer) %>%
+          as.data.frame()
+        top_x %>% 
+          select(player_name, birthday, height, weight, preferred_foot, overall_rating) %>% 
+          datatable(., options = list(pageLength = 10))
+        radarDF <- top_x %>% select(player_name, 10:42) %>% as.data.frame()
+        player_attr <- top_x %>% select(player_name, 10:42) %>% as.data.frame()
+        cols <- 2:34
+        player_attr[cols] <- lapply(player_attr[cols], as.numeric)
+        xn=column_to_rownames(player_attr, var = "player_name")
+        
+      }
       xn = rbind(rep(0, 5) , rep(100, 5) , xn)
+      #xn = rbind(rep(0, 5) , rep(100, 5) , xn)
       radarchart(xn, axistype = 1 ,
                  #custom polygon
                  #custom polygon
-                 pcol=colors_border , pfcol=colors_in , plwd=3, plty=1 , 
+                 pcol=colors_border , pfcol=colors_in , plwd=1, plty=1 , 
                  #custom the grid
                  cglcol="grey", cglty=1, axislabcol="grey", caxislabels=seq(0,100,25), cglwd=1.1,
               
@@ -248,8 +267,7 @@ server <- function(input, output) {
       legend(
         x = "bottom", legend = rownames(xn[c(data),]), horiz = TRUE,
         bty = "n", pch = 100 , col = colors_in,
-        text.col = "black", cex = 1, pt.cex = 1.5
-      )
+        text.col = "black", cex = 1, pt.cex = 1.)
       
       
       #htmltools::as.tags(chartJSRadar(scores = player_attr, maxScale = 100, showToolTipLabel = TRUE))
