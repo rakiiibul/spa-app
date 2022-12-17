@@ -1,75 +1,85 @@
-#
+#---
+#title: "Soccer Player Stats"
+#author: "Raikibul"
+#date: "2022-11-30"
+#output: html_document
+#---
 # This is a Shiny web application. You can run the application by clicking
 # the 'Run App' button above.
 
-library("tibble")
+##Import necessary Library
+library(tibble)
 library(dplyr)
 library(RSQLite)
 library(radarchart)
 library(tidyr)
 library(DT)
 library(fmsb)
-#con <- dbConnect(drv=RSQLite::SQLite(), dbname="database.sqlite")
-
-
-###
-#scores <- select(filter(radarDF),c(Label,Neymar))
 library(shiny)
-###my code
 
+###connect with the database
 con <- dbConnect(SQLite(), dbname="database.sqlite")
-dbListTables(con)
+
+
+#if database connection established, Check the tables list
 # list all tables
+dbListTables(con)
 
-
+#import data from table player & player attributes
 player       <- tbl_df(dbGetQuery(con,"SELECT * FROM player"))
 player_stats <- tbl_df(dbGetQuery(con,"SELECT * FROM player_Attributes"))
 
+#join two table using primary key player Id
 player_stats <-  player_stats %>%
   rename(player_stats_id = id) %>%
   left_join(player, by = "player_api_id")
-str(player_stats)
+
+#check rating latest
 latest_ps <- 
   player_stats %>% 
   group_by(player_api_id) %>% 
   top_n(n = 1, wt = date) %>%
   as.data.frame()
+
+#filter top 20 player based on overall rating
 top20 <- 
   latest_ps  %>% 
   arrange(desc(overall_rating)) %>% 
   head(n = 20) %>%
   as.data.frame()
 
-
+#select necessary column
 top20 %>% 
   select(player_name, birthday, height, weight, preferred_foot, overall_rating) %>% 
   datatable(., options = list(pageLength = 10))
 
+#this code is used for chartradarjs library 
 radarDF <- top20 %>% select(player_name, 10:42) %>% as.data.frame()
 
 radarDF1 <- gather(radarDF, key=Label, value=Score, -player_name) %>%
   spread(key=player_name, value=Score)
+
+# take necessary column fro radarchart and preprocessing
 player_attr <- top20 %>% select(player_name, 10:42) %>% as.data.frame()
 cols <- 2:34
 player_attr[cols] <- lapply(player_attr[cols], as.numeric)
 x=column_to_rownames(player_attr, var = "player_name")
 
-# Define UI for application that draws a histogram
+# Define UI for application that draws a radarchart
 ui <- fluidPage(
 
     # Application title
     titlePanel("Player Attributes"),
-    
-   
-    
-    
 
-    # Sidebar with a slider input for number of bins 
+    # Sidebar with a 4 different inputs
     sidebarLayout(
         sidebarPanel(
+          radioButtons(inputId = "option_type" , 
+                       label = "Choose an  Option",
+                       choices = c("Single", "1 VS 1", "multiple" )),
           
         selectInput("var", 
-                    label = "Choose a player",
+                    label = "Choose single player",
                     choices = c("Lionel Messi",
                                 "Cristiano Ronaldo",
                                 "Luis Suarez",
@@ -86,11 +96,6 @@ ui <- fluidPage(
                                 "David De Gea",
                                 "Luka Modric"),
                     selected = "Lionel Messi"),
-        
-        
-        radioButtons(inputId = "option_type" , 
-                     label = "Choose an  Option",
-                     choices = c("Single", "1 VS 1", "multiple" )),
         
         
         h3("Compare Attribute of two  different Players"),
@@ -229,7 +234,7 @@ server <- function(input, output) {
       colors_border=c( rgb(0.2,0.5,0.5,0.9), rgb(0.8,0.2,0.5,0.9) , rgb(0.7,0.5,0.1,0.9) )
       colors_in=c( rgb(0.2,0.5,0.5,0.4), rgb(0.8,0.2,0.5,0.4) , rgb(0.7,0.5,0.1,0.4) )
       if (input$option_type == "Single") {
-        xn=x[data1,]
+        xn=x[data,]
       } else if (input$option_type == "1 VS 1") {
         x1=x[data1,]
         x2=x[data2,]
@@ -237,6 +242,8 @@ server <- function(input, output) {
         
       }
       else if (input$option_type == "multiple") {
+        colors_border= topo.colors(top_n_palyer)
+        
         top_x <- 
           latest_ps  %>% 
           arrange(desc(overall_rating)) %>% 
@@ -252,10 +259,9 @@ server <- function(input, output) {
         xn=column_to_rownames(player_attr, var = "player_name")
         
       }
-      xn = rbind(rep(0, 5) , rep(100, 5) , xn)
-      #xn = rbind(rep(0, 5) , rep(100, 5) , xn)
+      #for radar char first two row take the min and max value,thus added two more column
+      xn = rbind(rep(100, 5) , rep(0, 5) , xn)
       radarchart(xn, axistype = 1 ,
-                 #custom polygon
                  #custom polygon
                  pcol=colors_border , pfcol=colors_in , plwd=1, plty=1 , 
                  #custom the grid
@@ -265,9 +271,10 @@ server <- function(input, output) {
                  vlcex = 0.8
       )
       legend(
-        x = "bottom", legend = rownames(xn[c(data),]), horiz = TRUE,
+        x = "bottom", legend = rownames(xn[c(data1,data2),]), horiz = TRUE,
         bty = "n", pch = 100 , col = colors_in,
         text.col = "black", cex = 1, pt.cex = 1.)
+ 
       
       
       #htmltools::as.tags(chartJSRadar(scores = player_attr, maxScale = 100, showToolTipLabel = TRUE))
