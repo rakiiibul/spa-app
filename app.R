@@ -101,7 +101,7 @@ ui <- fluidPage(
         h3("Compare Attribute of two  different Players"),
         fluidRow( column(6,
                selectInput("com1", 
-                           label = "Choose a player",
+                           label = "Choose first player",
                            choices = c("Lionel Messi",
                                        "Cristiano Ronaldo",
                                        "Luis Suarez",
@@ -122,7 +122,7 @@ ui <- fluidPage(
         
         column(6,
                selectInput("com2", 
-                           label = "Choose a player",
+                           label = "Choose second player",
                            choices = c("Lionel Messi",
                                        "Cristiano Ronaldo",
                                        "Luis Suarez",
@@ -138,33 +138,36 @@ ui <- fluidPage(
                                        "Thiago Silva",
                                        "David De Gea",
                                        "Luka Modric"),
-                           selected = "Lionel Messi")
+                           selected = "Cristiano Ronaldo")
                
                
                )),
         
+        sliderInput("top_player", label = "Choose top n Player",
+                    min = 3, max = 50, value = 3),
         
-        selectInput("top_player", 
-                    label = "Choose top n Player",
-                    choices = c("3",
-                                "5",
-                                "8",
-                                "10",
-                                "15",
-                                "20",
-                                "25",
-                                "30"),
-                                selected = "3"),),
+        # selectInput("top_player", 
+        #             
+        #             choices = c("3",
+        #                         "5",
+        #                         "8",
+        #                         "10",
+        #                         "15",
+        #                         "20",
+        #                         "25",
+        #                         "30"),
+        #                         selected = "3"),
+        ),
         
 
-        # Show a plot of the generated distribution
+        # Show a plot of the generated radar chart
         mainPanel(
            plotOutput(outputId="map", height="800px")
         )
     )
 )
 
-# Define server logic required to draw a histogram
+# Define server logic required to draw the chart
 server <- function(input, output) {
 
     output$map <- renderPlot({
@@ -221,28 +224,36 @@ server <- function(input, output) {
                      "Sergio Aguero" = 'Sergio Aguero',
                      "David De Gea" = 'David De Gea',
                      "Luka Modric"='Luka Modric')
-      top_n_palyer <- switch(input$top_player, 
-                             "3"=3,
-                              "5"=5,
-                              "8"=8,
-                              "10"=10,
-                              "15"=15,
-                              "20"=20,
-                              "25"=25,
-                              "30"=30)
+      
+      
+      top_n_palyer <- input$top_player
+      #print(top_n_palyer)
       #xplayer_attr <- select(filter(x),c('Neymar'))
       colors_border=c( rgb(0.2,0.5,0.5,0.9), rgb(0.8,0.2,0.5,0.9) , rgb(0.7,0.5,0.1,0.9) )
       colors_in=c( rgb(0.2,0.5,0.5,0.4), rgb(0.8,0.2,0.5,0.4) , rgb(0.7,0.5,0.1,0.4) )
       if (input$option_type == "Single") {
+        
         xn=x[data,]
+        
+        #legend style
+        chart_legend=rownames(xn[c(data),])
+        legend_x="bottom"
+        legend_y=NULL
+        isHoriz=TRUE
+        
       } else if (input$option_type == "1 VS 1") {
         x1=x[data1,]
         x2=x[data2,]
         xn <- rbind(x1, x2)
+        chart_legend=rownames(xn[c(data1,data2),])
+        
+        #legend style
+        legend_x="bottom"
+        legend_y=NULL
+        isHoriz=TRUE
         
       }
       else if (input$option_type == "multiple") {
-        colors_border= topo.colors(top_n_palyer)
         
         top_x <- 
           latest_ps  %>% 
@@ -257,31 +268,34 @@ server <- function(input, output) {
         cols <- 2:34
         player_attr[cols] <- lapply(player_attr[cols], as.numeric)
         xn=column_to_rownames(player_attr, var = "player_name")
+        c_Player_name=row.names(xn)
+       
+        
+        #legend style
+        chart_legend=c_Player_name
+        #print(c_Player_name)
+        legend_x=1.3
+        legend_y=1.3
+        colors_border= topo.colors(top_n_palyer)
+        isHoriz=FALSE
         
       }
       #for radar char first two row take the min and max value,thus added two more column
       xn = rbind(rep(100, 5) , rep(0, 5) , xn)
       radarchart(xn, axistype = 1 ,
+                 
                  #custom polygon
-                 pcol=colors_border , pfcol=colors_in , plwd=1, plty=1 , 
+                 pcol=colors_border , pfcol=colors_in , plwd=2, plty=1 , 
+                 
                  #custom the grid
                  cglcol="grey", cglty=1, axislabcol="grey", caxislabels=seq(0,100,25), cglwd=1.1,
-              
-                 #custom labels
-                 vlcex = 0.8
-      )
-      legend(
-        x = "bottom", legend = rownames(xn[c(data1,data2),]), horiz = TRUE,
-        bty = "n", pch = 100 , col = colors_in,
-        text.col = "black", cex = 1, pt.cex = 1.)
- 
-      
-      
-      #htmltools::as.tags(chartJSRadar(scores = player_attr, maxScale = 100, showToolTipLabel = TRUE))
-      #radarDF1 <- top20 %>% select(player_name, 10:42) %>% as.data.frame()
 
-      #chartJSRadarOutput(chartJSRadar)
-    
+                 #custom labels
+                 vlcex = 0.8,)
+      legend(
+        x = legend_x,y=legend_x, legend = chart_legend,horiz=isHoriz,
+        bty = "n", pch = 20 , col = colors_border,
+        text.col = "black", cex = 1, pt.cex = 3)
     })
 }
 
