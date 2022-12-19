@@ -8,6 +8,7 @@
 # the 'Run App' button above.
 
 ##Import necessary Library
+library(shiny)
 library(tibble)
 library(dplyr)
 library(RSQLite)
@@ -15,7 +16,7 @@ library(radarchart)
 library(tidyr)
 library(DT)
 library(fmsb)
-library(shiny)
+
 
 ###connect with the database
 con <- dbConnect(SQLite(), dbname="database.sqlite")
