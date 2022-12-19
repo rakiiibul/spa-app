@@ -1,24 +1,23 @@
 # CPA_shinyR
  
-
-::: {align="center"}
+<div align="center">
 <a href="https://github.com/rakiiibul/PAnSA_shinyR"></a>
 
-<h3 align="center">
+<h2 align="center">
 
 Soccer Player Attributes
 
-</h3>
+</h2>
 
 <p align="center">
 
-with R Program Language <br /> \<a
-<https://github.com/rakiiibul/PAnSA_shinyR/issues>"\>Report Bug</a> ·
+with R Program Language <br /> \
+<a href="https://github.com/rakiiibul/PAnSA_shinyR/issues">Report Bug</a> ·
 <a href="https://github.com/rakiiibul/PAnSA_shinyR/issues">Request
 Feature</a>
 
 </p>
-:::
+</div>
 
 <!-- TABLE OF CONTENTS -->
 
@@ -34,7 +33,7 @@ Feature</a>
 
 <ul>
 
-<li><a href="#built-with">Built With</a></li>
+<li><a href="#built-with">Built With R </a></li>
 
 </ul>
 
