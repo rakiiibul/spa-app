@@ -4,7 +4,7 @@
 <div id="top"></div>
 <div align="center">
 <a href="https://github.com/rakiiibul/PAnSA_shinyR">
- <img src="images/logo.png" alt="Logo" width="80" height="80"></a>
+ <!--<img src="data/logo.png" alt="Logo" width="80" height="80"></a>-->
 
 <h2 align="center">
 
@@ -69,7 +69,7 @@ Feature</a>
 
 ## About The Project
 
-<img src="images/image1.png" alt="SPA"></a>
+<img src="data/logo.jpeg" alt="SPA"></a>
 
 ### Context
 
@@ -129,11 +129,17 @@ plot.
 ## Getting Started
 
 To run this workshop, you can go with three different mode:
-
+-   Visitor mode(You just want to see the project, just visit website )
 -   Development Mode( if you want to run the workshop and modify it in
     R)  
 -   Production mode( You want to run it with docker in your own machine)
--   Visitor mode(You just want to see the project, just visit website )
+
+## Visitor Mode
+This application has been published.So just (<a href="https://therakiiibul.shinyapps.io/spa-app">click here</a>) to visit the application with your default browser.
+Or you can copy the link and browse with your desire browser.
+```
+https://therakiiibul.shinyapps.io/spa-app/
+```
 
 ##Development Mode\
 \### Prerequisites
