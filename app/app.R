@@ -68,6 +68,56 @@ x=column_to_rownames(player_attr, var = "player_name")
 
 # Define UI for application that draws a radarchart
 ui <- fluidPage(
+  list(tags$style(HTML("
+  
+.navbar{ background-color: #00b8bd;
+  padding-top:25px;
+  padding-bottom:20px}
+
+.navbar-default .navbar-brand{color: #fff;
+font-size: 25px; }
+
+.tab-panel{ background-color: #00b8bd; color: #00b8bd}
+.navbar .navbar-nav {float: right; }
+
+.navbar .navbar-nav li a:hover, .navbar1 .navbar-nav > .active > a {
+color: #fff !important;
+background-color:#00b8bd !important;
+background-image: #fff !important;
+}
+  "))),
+  
+  
+  
+  navbarPage("Soccer   Player    Attributes",
+             tabPanel(icon("home"),
+                      
+                      fluidRow(  br(),
+                                 p("Through this application, it is intended to develop a graphical environment for anyone who want to see the attributes of soccer player, 
+                                          
+                                   The FIFA World Cup Qatar 2022™ has been played from 20 November to 18 December. So basically its Soccer season. The excitement for football is very high to everyone. In this workshop, we explore the soccer player attributes. We explore single player attributes, compare 1 player attributes to another and also see top n player attributes in the radar plot.",style="text-align:justify;color:black;background-color:lavender;padding:15px;border-radius:10px"),
+                                 br(),
+                                 
+                      ),),
+             tabPanel("About",
+                      hr(),
+                      p(em("Developed by"),br("Raikibul Hasan(therakiiibul)"),style="text-align:center; font-family: times"),
+                      
+                      fluidRow(column(DT::dataTableOutput("RawData"),
+                                      width = 12)),
+                     
+                      hr(),
+                      tags$style(".fa-chart-pie {color:#E87722}"),
+                      h3(p(icon("chart-pie",lib = "font-awesome"),style="color:black;text-align:center")),
+                      tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: coral; border-top: 1px coral; border-bottom: 1px coral;border-left: 1px coral}")),
+                      tags$style(HTML(".js-irs-0 .irs-max, .js-irs-0 .irs-min {background:papayawhip}")),
+                      
+                      br(),
+             ),
+  ),
+  
+  
+  
 
     # Application title
     titlePanel("Player Attributes"),
@@ -145,27 +195,14 @@ ui <- fluidPage(
                )),
         
         sliderInput("top_player", label = "Choose top n Player",
-                    min = 3, max = 50, value = 3),
-        
-        # selectInput("top_player", 
-        #             
-        #             choices = c("3",
-        #                         "5",
-        #                         "8",
-        #                         "10",
-        #                         "15",
-        #                         "20",
-        #                         "25",
-        #                         "30"),
-        #                         selected = "3"),
-        ),
-        
+                    min = 3, max = 50, value = 3),),
 
         # Show a plot of the generated radar chart
         mainPanel(
-           plotOutput(outputId="map", height="800px")
+           plotOutput(outputId="map", height="750px")
         )
     )
+  
 )
 
 # Define server logic required to draw the chart
@@ -275,7 +312,7 @@ server <- function(input, output) {
         #legend style
         chart_legend=c_Player_name
         #print(c_Player_name)
-        legend_x=1.3
+        legend_x=1.25
         legend_y=1.3
         colors_border= topo.colors(top_n_palyer)
         isHoriz=FALSE
