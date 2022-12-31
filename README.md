@@ -1,6 +1,6 @@
 # CPA_shinyR
 
-[![Contributors](https://img.shields.io/github/contributors/rakiiibul/PAnSA_shinyR.svg?style=for-the-badge)](https://github.com/rakiiibul/PAnSA_shinyR/graphs/contributors) [![Forks](https://img.shields.io/github/forks/rakiiibul/PAnSA_shinyR.svg?style=for-the-badge)](https://github.com/rakiiibul/PAnSA_shinyR/network/members) [![Stargazers](https://img.shields.io/github/stars/rakiiibul/PAnSA_shinyR.svg?style=for-the-badge)](https://github.com/rakiiibul/PAnSA_shinyR/stargazers) [![Issues](https://img.shields.io/github/issues/rakiiibul/PAnSA_shinyR.svg?style=for-the-badge)](https://github.com/rakiiibul/PAnSA_shinyR/issues) [![MIT License](https://img.shields.io/github/license/rakiiibul/PAnSA_shinyR.svg?style=for-the-badge)](https://github.com/rakiiibul/PAnSA_shinyR/blob/master/LICENSE)
+[![Contributors](https://img.shields.io/github/contributors/rakiiibul/spa-app.svg?style=for-the-badge)](https://github.com/rakiiibul/spa-app/graphs/contributors) [![Forks](https://img.shields.io/github/forks/rakiiibul/spa-app.svg?style=for-the-badge)](https://github.com/rakiiibul/spa-app/network/members) [![Stargazers](https://img.shields.io/github/stars/rakiiibul/spa-app.svg?style=for-the-badge)](https://github.com/rakiiibul/spa-app/stargazers) [![Issues](https://img.shields.io/github/issues/rakiiibul/spa-app.svg?style=for-the-badge)](https://github.com/rakiiibul/spa-app/issues) [![MIT License](https://img.shields.io/github/license/rakiiibul/spa-app.svg?style=for-the-badge)](https://github.com/rakiiibul/spa-app/blob/master/LICENSE)
 <div id="top"></div>
 <div align="center">
 <a href="https://github.com/rakiiibul/spa-app">
@@ -334,7 +334,9 @@ Image generate from <https://deepai.org/>
 (<a href="#top">back to top</a>)
 
 </p>
+If you like this application don’t forget to give the star.
 
+Happy Coding :) !!!
 <!-- MARKDOWN LINKS & IMAGES -->
 
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
