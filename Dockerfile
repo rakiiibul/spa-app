@@ -1,6 +1,8 @@
 # Base image https://hub.docker.com/u/rocker/
 FROM rocker/shiny:latest
+LABEL maintainer="Raikibul <therakiiibul@outlook.com>"
 
+#uncomment system libraries if you need to update
 # system libraries of general use
 ## install debian packages
 #RUN apt-get update -qq && apt-get -y --no-install-recommends install \
@@ -27,10 +29,9 @@ COPY ./app ./app
 
 # install renv & restore packages
 RUN R -e "install.packages(c('shiny', 'tibble', 'dplyr', 'RSQLite', 'radarchart', 'tidyr', 'DT', 'fmsb'))"
-RUN Rscript -e 'install.packages("renv")'
+#if you want to install the package from renv then comment previous line and uncomment below line
+#RUN Rscript -e 'install.packages("renv")'
 #RUN Rscript -e 'renv::restore()'
-#RUN Rscript -e 'renv::activate()'
-#RUN Rscript -e 'renv::install()'
 
 # expose port
 EXPOSE 3838
